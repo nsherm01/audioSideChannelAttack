@@ -50,33 +50,32 @@ def isolate_sounds(wav_file):
     print("returning sound_segments: ", sound_segments)
     return sound_segments
 
-def create_mel_spectrogram(sound_segments, output_image):
-    print("in create_mel_spectrogram")
-    print("length of sound_segments: ", len(sound_segments))
-    sr = 22050
-    print("sr: ", sr)
-    # Generate mel spectrogram for each sound segment
-    for i, segment in enumerate(sound_segments):
-        print("in for loop, i = ", i)
-        # Compute the mel spectrogram
-        mel_spectrogram = librosa.feature.melspectrogram(y=segment, sr=sr)
+def create_mel_spectrogram(segment, output_image, sr, i):
+    print("Creating Mel Spectrogram Number: ", i)
 
-        # Convert to log scale (dB)
-        log_mel_spectrogram = librosa.power_to_db(mel_spectrogram, ref=np.max)
+    # Compute the mel spectrogram
+    mel_spectrogram = librosa.feature.melspectrogram(y=segment, sr=sr)
+
+    # Convert to log scale (dB)
+    # log_mel_spectrogram = librosa.power_to_db(mel_spectrogram, ref=np.max)
+
+    # Convert the frames to time (in seconds)
+    times = librosa.frames_to_time(range(mel_spectrogram.shape[1]), sr=sr)
 
 
-        # Plot the mel spectrogram
-        plt.figure(figsize=(10, 5))
-        librosa.display.specshow(log_mel_spectrogram, sr=sr, x_axis='time', y_axis='mel')
-        plt.title(f'Mel Spectrogram - Sound Segment {i+1}')
-        plt.colorbar(format='%+2.0f dB')
+    # Plot the mel spectrogram
+    plt.figure(figsize=(10, 4))
+    librosa.display.specshow(librosa.power_to_db(mel_spectrogram, ref=np.max), x_coords=times, x_axis='time', y_axis='mel')
+    plt.title(f'Mel Spectrogram - Sound Segment {i+1}')
+    plt.colorbar(format='%+2.0f dB')
+     # Set the x-axis limits
+    plt.xlim(0, 0.2)  # Change these values to your desired range
+    plt.tight_layout()
 
-        print("got here")
+    # Save the plot as a PNG image
+    plt.savefig(output_image, bbox_inches='tight', pad_inches=0.0)
 
-        # Save the plot as a PNG image
-        plt.savefig(output_image, bbox_inches='tight', pad_inches=0.0)
-
-        plt.show()
+    # plt.show()
 
 # def print_mel_spec(sound_segment):
 #     print("printing mel spec")
@@ -98,9 +97,21 @@ def create_mel_spectrogram(sound_segments, output_image):
 def main():
     flag = True
     input_wav_file = 'file_example_WAV_2MG.wav'
-    output_image_file = 'mel_spec_out' + {i+1} + '.png'
     sound_segments = isolate_sounds(input_wav_file)
-    create_mel_spectrogram(sound_segments, output_image_file)
+    sr = 44100
+    for i, segment in enumerate(sound_segments):
+        # Image file name
+        output_image_file = 'mel_spec_out' + str(i+1) + '.png'
+
+        # # Get y and sr
+        # y, sr = librosa.load(segment)
+
+        # # Get the duration of the audio file
+        # duration = librosa.get_duration(y, sr)
+        # print(f"The duration of the audio file is {duration} seconds.")
+
+        #Create Mel Spectrogram
+        create_mel_spectrogram(segment, output_image_file, sr, i)
 
 if __name__ == "__main__":
     main()
