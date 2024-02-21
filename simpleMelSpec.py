@@ -22,6 +22,10 @@ def wav_to_mel_spectrogram(wav_file, output_image):
     plt.show()
 
 # Example usage:
-input_wav_file = 'file_example_WAV_2MG.wav'
-output_image_file = 'mel_spectrogram.png'
-wav_to_mel_spectrogram(input_wav_file, output_image_file)
+def main():
+    input_wav_file = 'audiofiles/badtime.wav'
+    output_image_file = 'mel_spectrogram.png'
+    wav_to_mel_spectrogram(input_wav_file, output_image_file)
+
+if __name__ == "__main__":
+    main()
