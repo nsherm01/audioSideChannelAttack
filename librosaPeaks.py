@@ -6,11 +6,11 @@ import soundfile as sf
 hop_length = 128
 
 def main():
-    audiofile = "audiofiles/scale.wav"
+    audiofile = "audiofiles/E4x10.wav"
     sr, notes = isolatePeaks(audiofile)
     for i, segment in enumerate(notes):
         # Image file name
-        output_image_file = 'mel_spec_out' + str(i+1) + '.png'
+        output_image_file = 'E4_mel_spec_out' + str(i+1) + '.png'
         create_mel_spectrogram(segment, output_image_file, sr, i)
 
 def isolatePeaks(file):
@@ -31,25 +31,25 @@ def isolatePeaks(file):
     T = N/float(sr)
     t = np.linspace(0, T, len(onset_strength))
 
-    plt.figure(figsize=(14, 5))
-    plt.plot(t, onset_strength)
-    plt.xlabel('Time (sec)')
-    plt.xlim(xmin=0)
-    plt.ylim(0)
-    plt.show()
+    # plt.figure(figsize=(14, 5))
+    # plt.plot(t, onset_strength)
+    # plt.xlabel('Time (sec)')
+    # plt.xlim(xmin=0)
+    # plt.ylim(0)
+    # plt.show()
     
 
     peaks = librosa.util.peak_pick(onset_strength, pre_max=7, post_max=7, pre_avg=7, post_avg=7, delta=0.5, wait=5)
     print(peaks)
 
-    plt.figure(figsize=(14, 5))
-    plt.plot(t, onset_strength, label='Onset strength')
-    plt.vlines(t[peaks], 0, onset_strength.max(), color='r', alpha=0.8, label='Selected peaks')
-    plt.xlabel('Time (sec)')
-    plt.legend()
-    plt.xlim(0, T)
-    plt.ylim(0)
-    plt.show()
+    # plt.figure(figsize=(14, 5))
+    # plt.plot(t, onset_strength, label='Onset strength')
+    # plt.vlines(t[peaks], 0, onset_strength.max(), color='r', alpha=0.8, label='Selected peaks')
+    # plt.xlabel('Time (sec)')
+    # plt.legend()
+    # plt.xlim(0, T)
+    # plt.ylim(0)
+    # plt.show()
 
     onset_detect_samples = librosa.frames_to_samples(onset_detect, hop_length=hop_length)
     peak_samples = librosa.frames_to_samples(peaks, hop_length=hop_length)

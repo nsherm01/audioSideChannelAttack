@@ -5,7 +5,7 @@ import numpy as np
 import soundfile as sf
 
 
-def detect_peaks(audio_signal, sr, threshold=0.6):
+def detect_peaks(audio_signal, sr, threshold=0.8):
     # Normalize the audio signal
     audio_signal = audio_signal / np.max(np.abs(audio_signal))
     # print_mel_spec(audio_signal)
@@ -96,22 +96,22 @@ def create_mel_spectrogram(segment, output_image, sr, i):
 # Example usage:
 def main():
     flag = True
-    input_wav_file = 'file_example_WAV_2MG.wav'
+    input_wav_file = 'audiofiles/scale.wav'
     sound_segments = isolate_sounds(input_wav_file)
     sr = 44100
-    for i, segment in enumerate(sound_segments):
-        # Image file name
-        output_image_file = 'mel_spec_out' + str(i+1) + '.png'
+    # for i, segment in enumerate(sound_segments):
+    #     # Image file name
+    #     output_image_file = 'mel_spec_out' + str(i+1) + '.png'
 
-        # # Get y and sr
-        # y, sr = librosa.load(segment)
+    #     # # Get y and sr
+    #     # y, sr = librosa.load(segment)
 
-        # # Get the duration of the audio file
-        # duration = librosa.get_duration(y, sr)
-        # print(f"The duration of the audio file is {duration} seconds.")
+    #     # # Get the duration of the audio file
+    #     # duration = librosa.get_duration(y, sr)
+    #     # print(f"The duration of the audio file is {duration} seconds.")
 
-        #Create Mel Spectrogram
-        create_mel_spectrogram(segment, output_image_file, sr, i)
+    #     #Create Mel Spectrogram
+    #     create_mel_spectrogram(segment, output_image_file, sr, i)
 
 if __name__ == "__main__":
     main()
