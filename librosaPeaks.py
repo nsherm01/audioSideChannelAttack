@@ -6,11 +6,11 @@ import soundfile as sf
 hop_length = 128
 
 def main():
-    audiofile = "audiofiles/E4x10.wav"
+    audiofile = "audiofiles/D4x10.wav"
     sr, notes = isolatePeaks(audiofile)
     for i, segment in enumerate(notes):
         # Image file name
-        output_image_file = 'E4_mel_spec_out' + str(i+1) + '.png'
+        output_image_file = 'mel_spec_out' + str(i+1) + '.png'
         create_mel_spectrogram(segment, output_image_file, sr, i)
 
 def isolatePeaks(file):
@@ -77,11 +77,13 @@ def create_mel_spectrogram(segment, output_image, sr, i):
 
     # Compute the mel spectrogram
     mel_spectrogram = librosa.feature.melspectrogram(y=segment, sr=sr)
+    np.save('D4_mel_spectrogram.npy' + str(i), mel_spectrogram)
 
     # Convert to log scale (dB)
     # log_mel_spectrogram = librosa.power_to_db(mel_spectrogram, ref=np.max)
 
     # Convert the frames to time (in seconds)
+    '''
     times = librosa.frames_to_time(range(mel_spectrogram.shape[1]), sr=sr)
 
 
@@ -96,6 +98,8 @@ def create_mel_spectrogram(segment, output_image, sr, i):
 
     # Save the plot as a PNG image
     plt.savefig(output_image, bbox_inches='tight', pad_inches=0.0)
+
+    '''
 
 if __name__ == "__main__":
     main()
