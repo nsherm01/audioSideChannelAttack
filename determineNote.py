@@ -21,6 +21,7 @@ def load_training_data(training_data_directory):
                     file_path = os.path.join(note_path, file_name)
                     mel_spectrogram = np.load(file_path)  # load mel spectrogram using NumPy
                     # Print shape for debugging
+                    print("Loaded " + str(file_path[28:30]) + " " + str(file_path[56:57]) + " mel spectrogram")
                     print("Loaded mel spectrogram shape:", mel_spectrogram.shape)
                     # Reshape or preprocess mel spectrogram if needed
                     mel_spectrograms.append(mel_spectrogram)
