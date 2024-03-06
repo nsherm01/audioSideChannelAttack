@@ -23,7 +23,7 @@ def wav_to_mel_spectrogram(wav_file, output_image):
 
 # Example usage:
 def main():
-    input_wav_file = 'audiofiles/badtime.wav'
+    input_wav_file = 'audiofiles/GABCDEFG.wav'
     output_image_file = 'mel_spectrogram.png'
     wav_to_mel_spectrogram(input_wav_file, output_image_file)
 

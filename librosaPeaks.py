@@ -2,11 +2,12 @@ import matplotlib.pyplot as plt
 import librosa, librosa.display
 import numpy as np
 import soundfile as sf
+from skimage.transform import resize
 
 hop_length = 128
 
 def main():
-    audiofile = "audiofiles/C4x10.wav"
+    audiofile = "audiofiles/long_even_space.wav"
     sr, notes = isolatePeaks(audiofile)
     for i, segment in enumerate(notes):
         # Image file name
@@ -71,7 +72,7 @@ def isolatePeaks(file):
     for i, (note_begin, note_end) in enumerate(zip(note_begins, note_ends)):
         note = y[note_begin:note_end]
         output_notes.append(note)
-        sf.write('B3_note' + str(i+1) + '.wav', note, sr)
+        sf.write('audio_note' + str(i+1) + '.wav', note, sr)
 
     note_begins = [note[0] for note in notes]
     note_ends = [note[1] for note in notes]
@@ -97,18 +98,26 @@ def isolatePeaks(file):
 
 
 
-def create_mel_spectrogram(segment, sr, i):
+def create_mel_spectrogram(segment, sr, i, target_shape=(128, 128)):
     print("Creating Mel Spectrogram Number: ", i)
 
     # Compute the mel spectrogram
     mel_spectrogram = librosa.feature.melspectrogram(y=segment, sr=sr)
-    np.save('B3_mel_spectrogram' + str(i), mel_spectrogram)
+
+    # Resize mel spectrogram to target shape
+    mel_spectrogram_resized = resize(mel_spectrogram, target_shape, mode='constant')
+
+    test_notes_list = ['A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4'] #gABCDEFG
+    test_notes_list = ['B3', 'C4', 'B3', 'C4', 'F4', 'F4', 'G3', 'G3', 'G3', 'G4', 'F4', 'E4', 'D4', 'C4', 'C4', 'B3', 'C4', 'A3'] #ABCBCFFgggGFEDCCBCA
+    np.save(test_notes_list[i] + '_test_notes_mel_spectrogram' + str(i), mel_spectrogram_resized)
+
+
 
     # Convert to log scale (dB)
     # log_mel_spectrogram = librosa.power_to_db(mel_spectrogram, ref=np.max)
 
     # Convert the frames to time (in seconds)
-    '''
+    
     times = librosa.frames_to_time(range(mel_spectrogram.shape[1]), sr=sr)
 
 
@@ -119,12 +128,13 @@ def create_mel_spectrogram(segment, sr, i):
     plt.colorbar(format='%+2.0f dB')
      # Set the x-axis limits
     plt.xlim(0, hop_length / sr)  # Change these values to your desired range
-    plt.tight_layout()               
-FUCK SHIT BITCH YEAH IM SHECK WES AND IM GETTING REALLY RICHHHHH 
+    plt.tight_layout()   
+    # plt.show()            
+ 
     # Save the plot as a PNG image
-    plt.savefig(output_image, bbox_inches='tight', pad_inches=0.0)
+    # plt.savefig(output_image, bbox_inches='tight', pad_inches=0.0)
 
-    '''
+    
 
 if __name__ == "__main__":
     main()
