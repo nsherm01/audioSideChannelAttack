@@ -7,7 +7,7 @@ from skimage.transform import resize
 hop_length = 128
 
 def main():
-    audiofile = "audiofiles/long_even_space.wav"
+    audiofile = "audiofiles/odd_space.wav"
     sr, notes = isolatePeaks(audiofile)
     for i, segment in enumerate(notes):
         # Image file name
@@ -107,9 +107,10 @@ def create_mel_spectrogram(segment, sr, i, target_shape=(128, 128)):
     # Resize mel spectrogram to target shape
     mel_spectrogram_resized = resize(mel_spectrogram, target_shape, mode='constant')
 
-    test_notes_list = ['A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4'] #gABCDEFG
-    test_notes_list = ['B3', 'C4', 'B3', 'C4', 'F4', 'F4', 'G3', 'G3', 'G3', 'G4', 'F4', 'E4', 'D4', 'C4', 'C4', 'B3', 'C4', 'A3'] #ABCBCFFgggGFEDCCBCA
-    np.save(test_notes_list[i] + '_test_notes_mel_spectrogram' + str(i), mel_spectrogram_resized)
+    scale_notes_list = ['A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4'] #gABCDEFG
+    long_even_space_notes_list = ['B3', 'C4', 'B3', 'C4', 'F4', 'F4', 'G3', 'G3', 'G3', 'G4', 'F4', 'E4', 'D4', 'C4', 'C4', 'B3', 'C4', 'A3'] #ABCBCFFgggGFEDCCBCA
+    odd_space_notes_list = ['B3', 'C4', 'G4', 'G4', 'G4', 'A3'] #gBgCGGGEA
+    np.save(odd_space_notes_list[i] + '_test_notes_mel_spectrogram' + str(i), mel_spectrogram_resized)
 
 
 
