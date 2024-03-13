@@ -7,7 +7,7 @@ from skimage.transform import resize
 hop_length = 128
 
 def main():
-    audiofile = "audiofiles/odd_space.wav"
+    audiofile = "audiofiles/scale.wav"
     sr, notes = isolatePeaks(audiofile)
     for i, segment in enumerate(notes):
         # Image file name
@@ -20,9 +20,9 @@ def isolatePeaks(file):
     librosa.display.waveshow(y, sr=sr)
     plt.title('Stereo')
 
-    # plt.show()
+    plt.show()
 
-    onset_detect = librosa.onset.onset_detect(y=y, sr=sr, hop_length=hop_length)
+    onset_detect = librosa.onset.onset_detect(y=y, sr=sr, hop_length=hop_length, backtrack=True)
     onset_strength = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
     print("Onset Detection: ", onset_detect)
 
@@ -59,9 +59,9 @@ def isolatePeaks(file):
         gap = peak - onset
         if gap == 0:
             continue
-        begin_sample = peak - (4 * gap)
-        end_sample = peak + (9 * gap)
-        note = (begin_sample, end_sample)
+
+        end_sample = peak + (3 * gap)
+        note = (onset, end_sample)
         notes.append(note)
     print("notes: ", notes)
 
@@ -107,10 +107,9 @@ def create_mel_spectrogram(segment, sr, i, target_shape=(128, 128)):
     # Resize mel spectrogram to target shape
     mel_spectrogram_resized = resize(mel_spectrogram, target_shape, mode='constant')
 
-    scale_notes_list = ['A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4'] #gABCDEFG
-    long_even_space_notes_list = ['B3', 'C4', 'B3', 'C4', 'F4', 'F4', 'G3', 'G3', 'G3', 'G4', 'F4', 'E4', 'D4', 'C4', 'C4', 'B3', 'C4', 'A3'] #ABCBCFFgggGFEDCCBCA
-    odd_space_notes_list = ['B3', 'C4', 'G4', 'G4', 'G4', 'A3'] #gBgCGGGEA
-    np.save(odd_space_notes_list[i] + '_test_notes_mel_spectrogram' + str(i), mel_spectrogram_resized)
+    test_notes_list = ['A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4'] #gABCDEFG
+    test_notes_list = ['B3', 'C4', 'B3', 'C4', 'F4', 'F4', 'G3', 'G3', 'G3', 'G4', 'F4', 'E4', 'D4', 'C4', 'C4', 'B3', 'C4', 'A3'] #ABCBCFFgggGFEDCCBCA
+    np.save(test_notes_list[i] + '_test_notes_mel_spectrogram' + str(i), mel_spectrogram_resized)
 
 
 
