@@ -7,7 +7,7 @@ from skimage.transform import resize
 hop_length = 128
 
 def main():
-    audiofile = "audiofiles/long_even_space.wav"
+    audiofile = "audiofiles/scale.wav"
     sr, notes = isolatePeaks(audiofile)
     for i, segment in enumerate(notes):
         # Image file name
@@ -20,9 +20,9 @@ def isolatePeaks(file):
     librosa.display.waveshow(y, sr=sr)
     plt.title('Stereo')
 
-    # plt.show()
+    plt.show()
 
-    onset_detect = librosa.onset.onset_detect(y=y, sr=sr, hop_length=hop_length)
+    onset_detect = librosa.onset.onset_detect(y=y, sr=sr, hop_length=hop_length, backtrack=True)
     onset_strength = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
     print("Onset Detection: ", onset_detect)
 
@@ -59,9 +59,9 @@ def isolatePeaks(file):
         gap = peak - onset
         if gap == 0:
             continue
-        begin_sample = peak - (4 * gap)
-        end_sample = peak + (9 * gap)
-        note = (begin_sample, end_sample)
+
+        end_sample = peak + (3 * gap)
+        note = (onset, end_sample)
         notes.append(note)
     print("notes: ", notes)
 
