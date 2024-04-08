@@ -30,7 +30,6 @@ def isolatePeaks(file):
     onset_detect = librosa.onset.onset_detect(y=y, sr=sr, hop_length=hop_length, backtrack=True)
     onset_strength = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
     print("Onset Detection: ", onset_detect)
-
     
     N = len(y)
     T = N/float(sr)
@@ -43,29 +42,39 @@ def isolatePeaks(file):
     # plt.show()
     
 
-    peaks = librosa.util.peak_pick(onset_strength, pre_max=7, post_max=7, pre_avg=7, post_avg=7, delta=0.5, wait=5)
+    peaks = librosa.util.peak_pick(onset_strength, pre_max=7, post_max=7, pre_avg=7, post_avg=7, delta=1.5, wait=40)
     print("peaks: ", peaks)
     
     print("type of peaks: ", type(peaks))
 
-    onset_detect_samples = librosa.frames_to_samples(onset_detect, hop_length=hop_length)
+    #onset_detect_samples = librosa.frames_to_samples(onset_detect, hop_length=hop_length)
     peak_samples = librosa.frames_to_samples(peaks, hop_length=hop_length)
-    print(onset_detect_samples)
+    #print(onset_detect_samples)
     print(peak_samples)
 
 
     # Add end sample index
-    onset_samples = np.append(onset_detect_samples, len(y))
+    #onset_samples = np.append(onset_detect_samples, len(y))
 
     notes = []
     # Save each note as a separate .wav file
     # iterate through onset and peak pairs
-    for i, (onset, peak) in enumerate(zip(onset_detect, peaks)):
+
+    # remove onsets that are too close together
+    new_onsets = []
+    new_onsets.append(onset_detect[0])
+    for i in range(1, len(onset_detect)):
+        if onset_detect[i] - onset_detect[i-1] > 50:
+            new_onsets.append(onset_detect[i])
+
+    for i, (onset, peak) in enumerate(zip(new_onsets, peaks)):
         gap = peak - onset
-        if gap == 0:
+        
+        if gap == 0 or onset + 40 > len(t):
             continue
 
-        end_sample = peak + (3 * gap)
+        # Hardcode note length to 40 frames
+        end_sample = onset + 40
         note = (onset, end_sample)
         notes.append(note)
     print("notes: ", notes)
@@ -88,9 +97,8 @@ def isolatePeaks(file):
     plt.figure(figsize=(14, 5))
     plt.plot(t, onset_strength, label='Onset strength')
     plt.vlines(t[peaks], 0, onset_strength.max(), color='r', alpha=0.8, label='Selected peaks')
-    plt.vlines(t[onset_detect], 0, onset_strength.max(), color='g', alpha=0.8, label='Onsets')
+    plt.vlines(t[note_ends], 0, onset_strength.max(), color='g', alpha=0.8, label='Note Ends')
     plt.vlines(t[note_begins], 0, onset_strength.max(), color='y', alpha=0.8, label='Note Begins')
-    # plt.vlines(t[note_ends], 0, onset_strength.max(), color='orange', alpha=0.8, label='Note Ends')
     plt.xlabel('Time (sec)')
     plt.legend()
     plt.xlim(0, T) 
