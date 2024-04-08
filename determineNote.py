@@ -83,7 +83,7 @@ model.compile(optimizer='adam',
 model.fit(mel_spectrograms, labels_categorical, epochs=epochs, batch_size=batch_size)
 
 # Load testing data
-testing_file_path = 'testing_notes_long'
+testing_file_path = 'audiofiles/Top_Row_Test_Data.wav'
 testing_mel_spectrograms, testing_labels = load_testing_data(testing_file_path)
 
 # Convert labels to numerical values using LabelEncoder

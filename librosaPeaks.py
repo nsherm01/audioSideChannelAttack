@@ -4,10 +4,15 @@ import numpy as np
 import soundfile as sf
 from skimage.transform import resize
 
+#SMOTE
+
 hop_length = 128
+note_char = ""
 
 def main():
-    audiofile = "audiofiles/scale.wav"
+    audiofile = "top_keyboard_notes/E.wav"
+    # note_char = audiofile[19]
+    print(note_char)
     sr, notes = isolatePeaks(audiofile)
     for i, segment in enumerate(notes):
         # Image file name
@@ -85,7 +90,7 @@ def isolatePeaks(file):
     plt.vlines(t[peaks], 0, onset_strength.max(), color='r', alpha=0.8, label='Selected peaks')
     plt.vlines(t[onset_detect], 0, onset_strength.max(), color='g', alpha=0.8, label='Onsets')
     plt.vlines(t[note_begins], 0, onset_strength.max(), color='y', alpha=0.8, label='Note Begins')
-    plt.vlines(t[note_ends], 0, onset_strength.max(), color='orange', alpha=0.8, label='Note Ends')
+    # plt.vlines(t[note_ends], 0, onset_strength.max(), color='orange', alpha=0.8, label='Note Ends')
     plt.xlabel('Time (sec)')
     plt.legend()
     plt.xlim(0, T) 
@@ -93,8 +98,7 @@ def isolatePeaks(file):
     plt.show()
         
     return sr, output_notes
-
-
+                               
 
 
 
@@ -109,7 +113,8 @@ def create_mel_spectrogram(segment, sr, i, target_shape=(128, 128)):
 
     test_notes_list = ['A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4'] #gABCDEFG
     test_notes_list = ['B3', 'C4', 'B3', 'C4', 'F4', 'F4', 'G3', 'G3', 'G3', 'G4', 'F4', 'E4', 'D4', 'C4', 'C4', 'B3', 'C4', 'A3'] #ABCBCFFgggGFEDCCBCA
-    np.save(test_notes_list[i] + '_test_notes_mel_spectrogram' + str(i), mel_spectrogram_resized)
+
+    np.save('_mel_spectrogram' + str(i), mel_spectrogram_resized)
 
 
 
@@ -124,7 +129,7 @@ def create_mel_spectrogram(segment, sr, i, target_shape=(128, 128)):
     # Plot the mel spectrogram
     plt.figure(figsize=(10, 4))
     librosa.display.specshow(librosa.power_to_db(mel_spectrogram, ref=np.max), x_coords=times, x_axis='time', y_axis='mel')
-    plt.title(f'Mel Spectrogram - Sound Segment {i+1}')
+    plt.title('Mel Spectrogram - Sound Segment ' + str(i+1))
     plt.colorbar(format='%+2.0f dB')
      # Set the x-axis limits
     plt.xlim(0, hop_length / sr)  # Change these values to your desired range
