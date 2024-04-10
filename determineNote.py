@@ -5,7 +5,7 @@ from tensorflow.keras import layers, models, utils
 
 # Define parameters
 input_shape = (128, 128, 1)  # Define your mel spectrogram shape
-num_classes = 8  # Define the number of different notes
+num_classes = 10  # Define the number of different notes
 epochs = 10  # Define the number of epochs for training
 batch_size = 32  # Define the batch size for training
 
@@ -25,7 +25,7 @@ def load_training_data(training_data_directory):
                     print("Loaded mel spectrogram shape:", mel_spectrogram.shape)
                     # Reshape or preprocess mel spectrogram if needed
                     mel_spectrograms.append(mel_spectrogram)
-                    label = str(note_folder)[0:2]
+                    label = str(note_folder)[0:1]
                     print("Training Label: ", label)
                     labels.append(label)  # use the folder name as the label for the note
     return np.array(mel_spectrograms), labels
@@ -55,7 +55,7 @@ def load_testing_data(testing_file_path):
 
 
 # Load training and testing data
-training_data_directory = 'training_data(npy_mel_spec)'
+training_data_directory = 'mel_spectrograms'
 mel_spectrograms, labels = load_training_data(training_data_directory)
 
 
@@ -83,7 +83,7 @@ model.compile(optimizer='adam',
 model.fit(mel_spectrograms, labels_categorical, epochs=epochs, batch_size=batch_size)
 
 # Load testing data
-testing_file_path = 'audiofiles/Top_Row_Test_Data.wav'
+testing_file_path = 'testing_folders/testing_20_top_keys'
 testing_mel_spectrograms, testing_labels = load_testing_data(testing_file_path)
 
 # Convert labels to numerical values using LabelEncoder

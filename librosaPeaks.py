@@ -6,11 +6,13 @@ from skimage.transform import resize
 
 #SMOTE
 
-hop_length = 128
+hop_length = 128 #change to 32?
 note_char = ""
+key = "E"
 
 def main():
-    audiofile = "top_keyboard_notes/E.wav"
+    audiofile = "top_keyboard_notes/" + key + ".wav"
+    # audiofile = "audiofiles/Top_Row_Test_Data.wav"
     # note_char = audiofile[19]
     print(note_char)
     sr, notes = isolatePeaks(audiofile)
@@ -25,7 +27,7 @@ def isolatePeaks(file):
     librosa.display.waveshow(y, sr=sr)
     plt.title('Stereo')
 
-    plt.show()
+    # plt.show()
 
     onset_detect = librosa.onset.onset_detect(y=y, sr=sr, hop_length=hop_length, backtrack=True)
     onset_strength = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
@@ -86,7 +88,7 @@ def isolatePeaks(file):
     for i, (note_begin, note_end) in enumerate(zip(note_begins, note_ends)):
         note = y[note_begin:note_end]
         output_notes.append(note)
-        sf.write('audio_note' + str(i+1) + '.wav', note, sr)
+        sf.write('audio_note' + key + str(i+1) + '.wav', note, sr)
 
     note_begins = [note[0] for note in notes]
     note_ends = [note[1] for note in notes]
@@ -121,16 +123,17 @@ def create_mel_spectrogram(segment, sr, i, target_shape=(128, 128)):
 
     test_notes_list = ['A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4'] #gABCDEFG
     test_notes_list = ['B3', 'C4', 'B3', 'C4', 'F4', 'F4', 'G3', 'G3', 'G3', 'G4', 'F4', 'E4', 'D4', 'C4', 'C4', 'B3', 'C4', 'A3'] #ABCBCFFgggGFEDCCBCA
+    test_notes_list = ['DELETE','Y','E','O','U','P','I','U','U','T','Y','E','Q','U','E','W','T','Q','I','Y','P']
 
-    np.save('_mel_spectrogram' + str(i), mel_spectrogram_resized)
-
+    # np.save(test_notes_list[i] + '_test_' + '_mel_spectrogram' + str(i), mel_spectrogram_resized)
+    np.save(key + '_mel_spectrogram' + str(i), mel_spectrogram)
 
 
     # Convert to log scale (dB)
     # log_mel_spectrogram = librosa.power_to_db(mel_spectrogram, ref=np.max)
 
     # Convert the frames to time (in seconds)
-    
+    '''
     times = librosa.frames_to_time(range(mel_spectrogram.shape[1]), sr=sr)
 
 
@@ -141,7 +144,8 @@ def create_mel_spectrogram(segment, sr, i, target_shape=(128, 128)):
     plt.colorbar(format='%+2.0f dB')
      # Set the x-axis limits
     plt.xlim(0, hop_length / sr)  # Change these values to your desired range
-    plt.tight_layout()   
+    plt.tight_layout() 
+    '''  
     # plt.show()            
  
     # Save the plot as a PNG image

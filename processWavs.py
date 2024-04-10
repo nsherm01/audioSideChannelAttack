@@ -20,6 +20,7 @@ wav_files = [file for file in os.listdir(input_folder) if file.endswith('.wav')]
 # Loop through each WAV file
 for wav_file in wav_files:
     input_path = os.path.join(input_folder, wav_file)
+    print("Processing Input Path: ", input_path)
     output_subfolder = os.path.join(output_folder, os.path.splitext(wav_file)[0])
 
     # Create subfolder for output if it doesn't exist
