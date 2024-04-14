@@ -55,7 +55,7 @@ def load_testing_data(testing_file_path):
 
 
 # Load training and testing data
-training_data_directory = 'mel_spectrograms'
+training_data_directory = 'mel_spectrograms_(128x11)'
 mel_spectrograms, labels = load_training_data(training_data_directory)
 
 

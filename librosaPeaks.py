@@ -3,28 +3,31 @@ import librosa, librosa.display
 import numpy as np
 import soundfile as sf
 from skimage.transform import resize
+import sys
+import os
 
 #SMOTE
 
 hop_length = 128 #change to 32?
 note_char = ""
-key = "E"
 
 def main():
-    audiofile = "top_keyboard_notes/" + key + ".wav"
+    key = sys.argv[1]
+    audiofile = sys.argv[2]
+    output_folder = sys.argv[3]
     # audiofile = "audiofiles/Top_Row_Test_Data.wav"
     # note_char = audiofile[19]
     print(note_char)
-    sr, notes = isolatePeaks(audiofile)
+    sr, notes = isolatePeaks(audiofile, key)
     for i, segment in enumerate(notes):
         # Image file name
-        create_mel_spectrogram(segment, sr, i)
+        create_mel_spectrogram(segment, sr, i, key, output_folder)
 
-def isolatePeaks(file):
+def isolatePeaks(file, key):
     y, sr = librosa.load(file)
     plt.figure()
     plt.subplot(3, 1, 2)
-    librosa.display.waveshow(y, sr=sr)
+    #librosa.display.waveshow(y, sr=sr, color="blue")
     plt.title('Stereo')
 
     # plt.show()
@@ -105,14 +108,14 @@ def isolatePeaks(file):
     plt.legend()
     plt.xlim(0, T) 
     plt.ylim(0)
-    plt.show()
+    #plt.show()
         
     return sr, output_notes
                                
 
 
 
-def create_mel_spectrogram(segment, sr, i, target_shape=(128, 128)):
+def create_mel_spectrogram(segment, sr, i, key, output_folder, target_shape=(128, 128)):
     print("Creating Mel Spectrogram Number: ", i)
 
     # Compute the mel spectrogram
@@ -126,7 +129,7 @@ def create_mel_spectrogram(segment, sr, i, target_shape=(128, 128)):
     test_notes_list = ['DELETE','Y','E','O','U','P','I','U','U','T','Y','E','Q','U','E','W','T','Q','I','Y','P']
 
     # np.save(test_notes_list[i] + '_test_' + '_mel_spectrogram' + str(i), mel_spectrogram_resized)
-    np.save(key + '_mel_spectrogram' + str(i), mel_spectrogram_resized)
+    np.save(os.path.join(output_folder, key + '_mel_spectrogram' + str(i)), mel_spectrogram)
 
 
     # Convert to log scale (dB)
