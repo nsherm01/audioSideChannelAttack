@@ -6,7 +6,7 @@ from skimage.transform import resize
 
 #SMOTE
 
-hop_length = 128 #change to 32?
+hop_length = 32 #change to 32?
 note_char = ""
 key = "E"
 
