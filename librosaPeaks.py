@@ -6,7 +6,7 @@ from skimage.transform import resize
 
 #SMOTE
 
-hop_length = 32 #change to 32?
+hop_length = 128 #change to 32?
 note_char = ""
 key = "E"
 
@@ -126,7 +126,7 @@ def create_mel_spectrogram(segment, sr, i, target_shape=(128, 128)):
     test_notes_list = ['DELETE','Y','E','O','U','P','I','U','U','T','Y','E','Q','U','E','W','T','Q','I','Y','P']
 
     # np.save(test_notes_list[i] + '_test_' + '_mel_spectrogram' + str(i), mel_spectrogram_resized)
-    np.save(key + '_mel_spectrogram' + str(i), mel_spectrogram)
+    np.save(key + '_mel_spectrogram' + str(i), mel_spectrogram_resized)
 
 
     # Convert to log scale (dB)
