@@ -2,12 +2,13 @@ import numpy as np
 import os
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras import layers, models, utils
+from tensorflow.keras.layers import Input
 
 # Define parameters
-input_shape = (128, 128, 1)  # Define your mel spectrogram shape
+input_shape = (128, 11, 1)  # Define the input shape for the model (mel spectrogram shape
 num_classes = 10  # Define the number of different notes
 epochs = 10  # Define the number of epochs for training
-batch_size = 32  # Define the batch size for training
+batch_size = 1  # Define the batch size for training
 
 # Load training data
 def load_training_data(training_data_directory):
@@ -21,11 +22,10 @@ def load_training_data(training_data_directory):
                     file_path = os.path.join(note_path, file_name)
                     mel_spectrogram = np.load(file_path)  # load mel spectrogram using NumPy
                     # Print shape for debugging
-                    print("Loaded " + str(file_path[28:30]) + " " + str(file_path[56:57]) + " mel spectrogram")
                     print("Loaded mel spectrogram shape:", mel_spectrogram.shape)
                     # Reshape or preprocess mel spectrogram if needed
                     mel_spectrograms.append(mel_spectrogram)
-                    label = str(note_folder)[0:1]
+                    label = str(note_folder)[0]
                     print("Training Label: ", label)
                     labels.append(label)  # use the folder name as the label for the note
     return np.array(mel_spectrograms), labels
@@ -55,7 +55,7 @@ def load_testing_data(testing_file_path):
 
 
 # Load training and testing data
-training_data_directory = 'mel_spectrograms_(128x11)'
+training_data_directory = 'mel_spectrograms_NOTsized'
 mel_spectrograms, labels = load_training_data(training_data_directory)
 
 
@@ -66,18 +66,23 @@ labels_categorical = utils.to_categorical(labels_encoded, num_classes)
 
 # Build the model
 model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
+# Make sure the size doesnt get too small starting at 128x11
+model.add(Input(shape=input_shape))
+model.add(layers.Conv2D(32, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(layers.Flatten())
 model.add(layers.Dense(64, activation='relu'))
+
 model.add(layers.Dense(num_classes, activation='softmax'))
 
 model.compile(optimizer='adam',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
+
+print("TESTTTTTTT")
 
 # Train the model
 model.fit(mel_spectrograms, labels_categorical, epochs=epochs, batch_size=batch_size)

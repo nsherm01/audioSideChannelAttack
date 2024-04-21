@@ -19,6 +19,7 @@ def main():
     # note_char = audiofile[19]
     print(note_char)
     sr, notes = isolatePeaks(audiofile, key)
+    print("Sample rate is: ", sr)
     for i, segment in enumerate(notes):
         # Image file name
         create_mel_spectrogram(segment, sr, i, key, output_folder)
@@ -30,7 +31,7 @@ def isolatePeaks(file, key):
     #librosa.display.waveshow(y, sr=sr, color="blue")
     plt.title('Stereo')
 
-    # plt.show()
+    #plt.show()
 
     onset_detect = librosa.onset.onset_detect(y=y, sr=sr, hop_length=hop_length, backtrack=True)
     onset_strength = librosa.onset.onset_strength(y=y, sr=sr, hop_length=hop_length)
@@ -38,6 +39,7 @@ def isolatePeaks(file, key):
     
     N = len(y)
     T = N/float(sr)
+    print("Test: ", 1 + len(y) // hop_length)
     t = np.linspace(0, T, len(onset_strength))
     # plt.figure(figsize=(14, 5))
     # plt.plot(t, onset_strength)
@@ -136,7 +138,7 @@ def create_mel_spectrogram(segment, sr, i, key, output_folder, target_shape=(128
     # log_mel_spectrogram = librosa.power_to_db(mel_spectrogram, ref=np.max)
 
     # Convert the frames to time (in seconds)
-    '''
+    
     times = librosa.frames_to_time(range(mel_spectrogram.shape[1]), sr=sr)
 
 
@@ -148,8 +150,8 @@ def create_mel_spectrogram(segment, sr, i, key, output_folder, target_shape=(128
      # Set the x-axis limits
     plt.xlim(0, hop_length / sr)  # Change these values to your desired range
     plt.tight_layout() 
-    '''  
-    # plt.show()            
+      
+    plt.show()            
  
     # Save the plot as a PNG image
     # plt.savefig(output_image, bbox_inches='tight', pad_inches=0.0)
