@@ -75,7 +75,7 @@ def create_mel_spectrogram(segment, output_image, sr, i):
     # Save the plot as a PNG image
     plt.savefig(output_image, bbox_inches='tight', pad_inches=0.0)
 
-    # plt.show()
+    plt.show()
 
 # def print_mel_spec(sound_segment):
 #     print("printing mel spec")

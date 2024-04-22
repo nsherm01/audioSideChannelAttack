@@ -5,7 +5,7 @@ from tensorflow.keras import layers, models, utils
 from tensorflow.keras.layers import Input
 
 # Define parameters
-input_shape = (128, 11, 1)  # Define the input shape for the model (mel spectrogram shape
+input_shape = (128, 321, 1)  # Define the input shape for the model (mel spectrogram shape
 num_classes = 10  # Define the number of different notes
 epochs = 10  # Define the number of epochs for training
 batch_size = 1  # Define the batch size for training
@@ -55,7 +55,7 @@ def load_testing_data(testing_file_path):
 
 
 # Load training and testing data
-training_data_directory = 'mel_spectrograms_NOTsized'
+training_data_directory = 'mel_spectrograms_(128x321)'
 mel_spectrograms, labels = load_training_data(training_data_directory)
 
 
@@ -81,8 +81,6 @@ model.add(layers.Dense(num_classes, activation='softmax'))
 model.compile(optimizer='adam',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
-
-print("TESTTTTTTT")
 
 # Train the model
 model.fit(mel_spectrograms, labels_categorical, epochs=epochs, batch_size=batch_size)

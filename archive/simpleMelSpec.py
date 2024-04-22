@@ -8,7 +8,7 @@ def wav_to_mel_spectrogram(wav_file, output_image):
     y, sr = librosa.load(wav_file)
 
     # Compute the mel spectrogram
-    mel_spectrogram = librosa.feature.melspectrogram(y=y, sr=sr)
+    mel_spectrogram = librosa.feature.melspectrogram(y=y, sr=sr, hop_length=32)
 
     # Convert to log scale (dB)
     log_mel_spectrogram = librosa.power_to_db(mel_spectrogram, ref=np.max)

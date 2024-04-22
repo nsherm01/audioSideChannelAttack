@@ -8,7 +8,7 @@ from skimage.transform import resize
 
 # Define paths
 input_folder = 'top_keyboard_notes'
-output_folder = 'mel_spectrograms_NOTsized'
+output_folder = 'mel_spectrograms_(128x321)'
 
 # Create output folder if it doesn't exist
 if not os.path.exists(output_folder):
