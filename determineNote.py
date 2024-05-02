@@ -3,6 +3,7 @@ import os
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras import layers, models, utils
 from tensorflow.keras.layers import Input
+import coatnet
 
 # Define parameters
 input_shape = (128, 321, 1)  # Define the input shape for the model (mel spectrogram shape

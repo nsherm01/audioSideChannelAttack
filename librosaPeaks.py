@@ -60,7 +60,7 @@ def showMelSpectrogram(mel_spectrogram, sr):
 
     plt.figure(figsize=(10, 4))
     librosa.display.specshow(librosa.power_to_db(mel_spectrogram, ref=np.max), x_coords=times, x_axis='time', y_axis='mel')
-    plt.title('Mel Spectrogram - Sound Segment ' + str(i))
+    plt.title('Mel Spectrogram - Sound Segment')
     plt.colorbar(format='%+2.0f dB')
     plt.tight_layout() 
     plt.show()    
@@ -116,7 +116,7 @@ def create_mel_spectrogram(segment, sr, i, key, output_folder):
         key = test_notes_list[i]
     np.save(os.path.join(output_folder, key + '_mel_spectrogram' + str(i)), mel_spectrogram)
 
-    # showMelSpectrogram(mel_spectrogram, sr)    
+    showMelSpectrogram(mel_spectrogram, sr)    
 
 
 if __name__ == "__main__":
