@@ -2,9 +2,26 @@ from sys import argv
 import os
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import KFold
 from pytorchCoatnet import coatnet_0
-import tensorflow as tf
 import torch
+from torch.utils.data import DataLoader, SubsetRandomSampler
+from melDataset import melDataset
+
+batch_size = 8
+num_splits = 4
+epochs = 10
+lr = 5e-5 # taken from the paper
+weight_decay = 1e-8 # taken from the paper
+
+model = coatnet_0()
+
+loss_fn = torch.nn.CrossEntropyLoss()
+optim = torch.optim.AdamW(
+    model.parameters(),
+    lr=lr,
+    weight_decay=weight_decay
+)
 
 def load_training_data(training_data_directory):
     mel_spectrograms = []
@@ -22,7 +39,9 @@ def load_training_data(training_data_directory):
                     print("Loaded note ", label, " with size ", mel_spectrogram.shape)
                     labels.append(label)  # use the folder name as the label for the note
     labels = LabelEncoder().fit_transform(labels)  # convert labels to integers
-    return np.array(mel_spectrograms), labels
+    
+
+    return list(zip(mel_spectrograms, labels))
 
 # Load testing data
 def load_testing_data(testing_file_path):
@@ -45,25 +64,48 @@ def load_testing_data(testing_file_path):
             print("Test Label: ", label)
             testing_labels.append(label)  # Append the label to the list of labels
     testing_labels = LabelEncoder().fit_transform(testing_labels)  # Convert labels to integers
-    return np.array(testing_mel_spectrograms), testing_labels
+    return list(zip(testing_mel_spectrograms, testing_labels))
     
-def train_epoch(model, data, labels):
-    model.train()
-    for mel_spectrogram, label in zip(data, labels):
-        label = torch.tensor(label)
-        model(torch.from_numpy(mel_spectrogram))
+def train_epoch(model, data_loader):
 
-def valid_epoch(model, data, labels):
-    model.eval()
-    correct = 0
-    total = 0
-    for mel_spectrogram, label in zip(data, labels):
-        label = torch.tensor(label)
-        output = model(torch.from_numpy(mel_spectrogram))
-        _, predicted = torch.max(output.data, 1)
-        total += label.size(0)
-        correct += (predicted == label).sum().item()
-    return correct / total
+    model.train()
+    train_loss, train_correct = 0.0, 0
+
+    for step, batch in enumerate(data_loader):
+        optim.zero_grad()
+        x, y = batch
+        x = x.unsqueeze(1)
+        print("Training step: ", step)
+        logits = model(x.float())
+        loss = loss_fn(logits, y)
+        train_loss += loss.item()
+        loss.backward()
+        optim.step()
+
+        # calculate accuracy
+        preds = torch.argmax(logits, dim=1).flatten()
+        correct_preds_n = (preds == y).cpu().sum().item()
+        train_correct += correct_preds_n
+    return train_loss, train_correct
+
+def valid_epoch(model, train_dataloader):
+  model.eval()
+  val_loss, val_correct = 0.0, 0
+  
+  for step, batch in enumerate(train_dataloader):
+    optim.zero_grad()
+    x, y = batch
+
+    logits = model(x.float()) 
+    loss = loss_fn(logits, y)
+    val_loss += loss.item()
+    loss.backward()
+    optim.step()
+    preds = torch.argmax(logits, dim=1).flatten()
+    correct_preds_n = (preds == y).cpu().sum().item()
+    val_correct += correct_preds_n
+  
+  return val_loss, val_correct
 
 def main():
     if (len(argv) > 1):
@@ -71,19 +113,49 @@ def main():
     else:
         training_data_directory = 'mel_spectrograms_(128x321)'
 
-    training_mel_spectrograms, training_labels = load_training_data(training_data_directory)
-    testing_mel_spectrograms, testing_labels = load_testing_data('testing_output')
+    fold_history = {}
 
-    print(type(training_mel_spectrograms))
+    training_data = load_training_data(training_data_directory)
+    testing_data = load_testing_data('testing_output')
 
-    net = coatnet_0()
+    dataset = melDataset(training_data)
+    # training_data = (np_array, int)
+    # dataset = (tensor, tensor)
+
+    splits=KFold(n_splits=num_splits, shuffle=True, random_state=1337)
+
+    for fold, (train_idx, val_idx) in enumerate(splits.split(dataset)):
+        print('Fold {}'.format(fold + 1))
+        train_sampler = SubsetRandomSampler(train_idx)
+        test_sampler = SubsetRandomSampler(val_idx)
+        train_loader = DataLoader(dataset, batch_size=batch_size, sampler=train_sampler)
+        test_loader = DataLoader(dataset, batch_size=batch_size, sampler=test_sampler)
+
+        history = {'train_loss': [], 'test_loss': [],'train_acc':[],'test_acc':[]}
     
-    for epoch in range(10):
-        print(f"-- training epoch {epoch} --")
-        train_epoch(net, training_mel_spectrograms, training_labels)
-        accuracy = valid_epoch(net, testing_mel_spectrograms, testing_labels)
-
-        print(f"Accuracy: {accuracy}")
+        for epoch in range(epochs):
+            torch.cuda.empty_cache()
+            print('---train:')    
+            train_loss, train_correct = train_epoch(model, train_loader)
+            print('---eval:')
+            test_loss, test_correct = valid_epoch(model, test_loader)
+            train_loss = train_loss / len(train_loader.sampler)
+            train_acc = train_correct / len(train_loader.sampler) * 100
+            test_loss = test_loss / len(test_loader.sampler)
+            test_acc = test_correct / len(test_loader.sampler) * 100
+            print('---status:')
+            print("\tEpoch:{}/{} \n\tAverage Training Loss:{:.4f}, Average Test Loss:{:.4f}; \n\tAverage Training Acc {:.2f}%, Average Test Acc {:.2f}%\n".format(epoch + 1,
+                                                                                                                                                                config.epochs,
+                                                                                                                                                                train_loss,
+                                                                                                                                                                test_loss,
+                                                                                                                                                                train_acc,
+                                                                                                                                                                test_acc))
+            history['train_loss'].append(train_loss)
+            history['test_loss'].append(test_loss)
+            history['train_acc'].append(train_acc)
+            history['test_acc'].append(test_acc)
+        
+        fold_history[f'fold{fold+1}'] = history
 
 if __name__ == "__main__":
     main()

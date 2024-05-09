@@ -7,7 +7,7 @@ import soundfile as sf
 from skimage.transform import resize
 
 # Define paths
-input_folder = 'top_keyboard_notes'
+input_folder = 'keyboard_notes'
 output_folder = 'mel_spectrograms_(128x321)'
 
 # Create output folder if it doesn't exist
@@ -16,6 +16,8 @@ if not os.path.exists(output_folder):
 
 # Get list of WAV files
 wav_files = [file for file in os.listdir(input_folder) if file.endswith('.wav')]
+
+print(wav_files)
 
 # Loop through each WAV file
 for wav_file in wav_files:

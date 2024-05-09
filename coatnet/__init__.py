@@ -1,1 +1,0 @@
-from .coatnet import coatnet0, coatnet1, coatnet2, coatnet3, coatnet4, coatnet5, coatnet6, coatnet7

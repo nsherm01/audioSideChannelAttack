@@ -97,9 +97,12 @@ def isolatePeaks(file, key):
     # If doing training, save the notes to the notes folder
     if (key != "#"):
         for i, note in enumerate(notes_samples):
-            sf.write(os.path.join("training_notes", key + '_note' + str(i) + '.wav'), note, sr)
+            directory = os.path.join("training_notes", key)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            sf.write(os.path.join(directory, key + '_note' + str(i) + '.wav'), note, sr)
 
-    showNoteDetection(onset_strength, notes_frames, T, t)
+    #showNoteDetection(onset_strength, notes_frames, T, t)
         
     return sr, notes_samples
 
@@ -116,7 +119,7 @@ def create_mel_spectrogram(segment, sr, i, key, output_folder):
         key = test_notes_list[i]
     np.save(os.path.join(output_folder, key + '_mel_spectrogram' + str(i)), mel_spectrogram)
 
-    showMelSpectrogram(mel_spectrogram, sr)    
+    #showMelSpectrogram(mel_spectrogram, sr)    
 
 
 if __name__ == "__main__":

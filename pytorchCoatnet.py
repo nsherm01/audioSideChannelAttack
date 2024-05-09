@@ -242,7 +242,7 @@ class CoAtNet(nn.Module):
 def coatnet_0():
     num_blocks = [2, 2, 3, 5, 2]            # L
     channels = [64, 96, 192, 384, 768]      # D
-    return CoAtNet((224, 224), 3, num_blocks, channels, num_classes=1000)
+    return CoAtNet((224, 224), 1, num_blocks, channels, num_classes=1000)
 
 
 def coatnet_1():
