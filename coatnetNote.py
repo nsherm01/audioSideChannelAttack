@@ -75,7 +75,7 @@ def train_epoch(model, data_loader):
         optim.zero_grad()
         x, y = batch
         x = x.unsqueeze(1)
-        print("Training step: ", step)
+        print(f'\r{step+1}/{len(data_loader)}', end='')
         logits = model(x.float())
         loss = loss_fn(logits, y)
         train_loss += loss.item()
@@ -95,7 +95,9 @@ def valid_epoch(model, train_dataloader):
   for step, batch in enumerate(train_dataloader):
     optim.zero_grad()
     x, y = batch
+    x = x.unsqueeze(1)
 
+    print(f'\r{step+1}/{len(train_dataloader)}', end='')
     logits = model(x.float()) 
     loss = loss_fn(logits, y)
     val_loss += loss.item()
@@ -137,19 +139,18 @@ def main():
             torch.cuda.empty_cache()
             print('---train:')    
             train_loss, train_correct = train_epoch(model, train_loader)
-            print('---eval:')
+            print('\n---eval:')
             test_loss, test_correct = valid_epoch(model, test_loader)
             train_loss = train_loss / len(train_loader.sampler)
             train_acc = train_correct / len(train_loader.sampler) * 100
             test_loss = test_loss / len(test_loader.sampler)
             test_acc = test_correct / len(test_loader.sampler) * 100
-            print('---status:')
+            print('\n---status:')
             print("\tEpoch:{}/{} \n\tAverage Training Loss:{:.4f}, Average Test Loss:{:.4f}; \n\tAverage Training Acc {:.2f}%, Average Test Acc {:.2f}%\n".format(epoch + 1,
-                                                                                                                                                                config.epochs,
-                                                                                                                                                                train_loss,
-                                                                                                                                                                test_loss,
+                                                                                                                                                                epochs,
+                                                                                                                                                                train_loss,                                                                                                                          test_loss,
                                                                                                                                                                 train_acc,
-                                                                                                                                                                test_acc))
+                                                                                                                                                          test_acc))
             history['train_loss'].append(train_loss)
             history['test_loss'].append(test_loss)
             history['train_acc'].append(train_acc)
