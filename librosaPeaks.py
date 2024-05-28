@@ -8,12 +8,11 @@ import os
 hop_length = 128
 
 def main():
-    print(len(sys.argv))
     if (len(sys.argv) == 2):
         if (sys.argv[1] == "-test"):
             key = "#"
-            audiofile = "audiofiles/Top_Row_Test_Data.wav"
-            output_folder = "testing_output"
+            audiofile = "audiofiles/45keytest.wav"
+            output_folder = "45_testing_output"
     elif (len(sys.argv) == 4):
         key = sys.argv[1]
         audiofile = sys.argv[2]
@@ -102,7 +101,7 @@ def isolatePeaks(file, key):
                 os.makedirs(directory)
             sf.write(os.path.join(directory, key + '_note' + str(i) + '.wav'), note, sr)
 
-    #showNoteDetection(onset_strength, notes_frames, T, t)
+    # showNoteDetection(onset_strength, notes_frames, T, t)
         
     return sr, notes_samples
 
@@ -113,7 +112,7 @@ def create_mel_spectrogram(segment, sr, i, key, output_folder):
     mel_spectrogram = librosa.feature.melspectrogram(y=segment, sr=sr, hop_length=16)
     print("Creating Mel Spectrogram Number: ", i, " with shape: ", mel_spectrogram.shape)
 
-    test_notes_list = ['DELETE','Y','E','O','U','P','I','U','U','T','Y','E','Q','U','E','W','T','Q','I','Y','P']
+    test_notes_list = list("*PLMNKOIHBUYGVCTFDXRESZAWQHDTPAQJUYRCMP*JAZPIRV")
 
     if (key == "#"):
         key = test_notes_list[i]

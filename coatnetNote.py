@@ -1,12 +1,13 @@
 from sys import argv
 import os
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import KFold
 from pytorchCoatnet import coatnet_0
 import torch
 from torch.utils.data import DataLoader, SubsetRandomSampler
 from melDataset import melDataset
+import pickle
+from keyLabel import keyLabel
 
 batch_size = 8
 num_splits = 4
@@ -23,6 +24,8 @@ optim = torch.optim.AdamW(
     weight_decay=weight_decay
 )
 
+label_encoder = keyLabel()
+
 def load_training_data(training_data_directory):
     mel_spectrograms = []
     labels = []
@@ -38,7 +41,7 @@ def load_training_data(training_data_directory):
                     label = str(note_folder)[0]
                     print("Loaded note ", label, " with size ", mel_spectrogram.shape)
                     labels.append(label)  # use the folder name as the label for the note
-    labels = LabelEncoder().fit_transform(labels)  # convert labels to integers
+    labels = label_encoder.transform(labels)  # convert labels to integers
     
 
     return list(zip(mel_spectrograms, labels))
@@ -63,7 +66,7 @@ def load_testing_data(testing_file_path):
             label = file_name.split('_')[0]  # Extract the label from the file name
             print("Test Label: ", label)
             testing_labels.append(label)  # Append the label to the list of labels
-    testing_labels = LabelEncoder().fit_transform(testing_labels)  # Convert labels to integers
+    testing_labels = label_encoder.transform(testing_labels)  # Convert labels to integers
     return list(zip(testing_mel_spectrograms, testing_labels))
     
 def train_epoch(model, data_loader):
@@ -118,7 +121,7 @@ def main():
     fold_history = {}
 
     training_data = load_training_data(training_data_directory)
-    testing_data = load_testing_data('testing_output')
+    #testing_data = load_testing_data('testing_output')
 
     dataset = melDataset(training_data)
     # training_data = (np_array, int)
@@ -157,6 +160,7 @@ def main():
             history['test_acc'].append(test_acc)
         
         fold_history[f'fold{fold+1}'] = history
+    torch.save(model.state_dict(), "model_weights.pth")
 
 if __name__ == "__main__":
     main()
