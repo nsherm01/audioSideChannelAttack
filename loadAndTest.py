@@ -7,6 +7,19 @@ import torch.nn.functional as F
 from keyLabel import keyLabel
 import config
 
+
+'''
+loadAndTest.py
+
+This script loads the trained CoAtNet model and tests it on the testing data. It loads the mel spectrograms of the testing data and uses the model to predict the class of each mel spectrogram.
+To run this you will have needed to save the weights of the model. This is done at the end of coatnetNote.py using torch.save(model.state_dict(), "model_weights.pth").
+
+Usage:
+    python3 loadAndTest.py
+
+Arguments:
+    None
+'''
 def main():
     # Load model weights
     model_weights = "model_weights.pth"

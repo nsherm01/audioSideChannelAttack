@@ -1,3 +1,9 @@
+'''
+keyLabel.py
+
+This file contains the keyLabel class, which is used to transform labels to integers and vice versa.
+'''
+
 class keyLabel:
     def __init__(self):
         self.label_to_int = {b:a for a, b in enumerate(list("ABCDEFGHIJKLMNOPQRSTUVWXYZ*"))}
