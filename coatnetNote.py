@@ -2,26 +2,20 @@ from sys import argv
 import os
 import numpy as np
 from sklearn.model_selection import KFold
-from pytorchCoatnet import coatnet_0
+from pytorchCoatnet import CoAtNet
 import torch
 from torch.utils.data import DataLoader, SubsetRandomSampler
 from melDataset import melDataset
-import pickle
 from keyLabel import keyLabel
+from config import config
 
-batch_size = 8
-num_splits = 4
-epochs = 10
-lr = 5e-5 # taken from the paper
-weight_decay = 1e-8 # taken from the paper
-
-model = coatnet_0()
+model = CoAtNet(config.img_size[0:2], config.img_size[2], config.num_blocks, config.channels, num_classes=config.num_classes)
 
 loss_fn = torch.nn.CrossEntropyLoss()
 optim = torch.optim.AdamW(
     model.parameters(),
-    lr=lr,
-    weight_decay=weight_decay
+    lr=config.lr,
+    weight_decay=config.weight_decay
 )
 
 label_encoder = keyLabel()
@@ -127,18 +121,18 @@ def main():
     # training_data = (np_array, int)
     # dataset = (tensor, tensor)
 
-    splits=KFold(n_splits=num_splits, shuffle=True, random_state=1337)
+    splits=KFold(n_splits=config.num_splits, shuffle=True, random_state=1337)
 
     for fold, (train_idx, val_idx) in enumerate(splits.split(dataset)):
         print('Fold {}'.format(fold + 1))
         train_sampler = SubsetRandomSampler(train_idx)
         test_sampler = SubsetRandomSampler(val_idx)
-        train_loader = DataLoader(dataset, batch_size=batch_size, sampler=train_sampler)
-        test_loader = DataLoader(dataset, batch_size=batch_size, sampler=test_sampler)
+        train_loader = DataLoader(dataset, batch_size=config.batch_size, sampler=train_sampler)
+        test_loader = DataLoader(dataset, batch_size=config.batch_size, sampler=test_sampler)
 
         history = {'train_loss': [], 'test_loss': [],'train_acc':[],'test_acc':[]}
     
-        for epoch in range(epochs):
+        for epoch in range(config.epochs):
             torch.cuda.empty_cache()
             print('---train:')    
             train_loss, train_correct = train_epoch(model, train_loader)
@@ -150,7 +144,7 @@ def main():
             test_acc = test_correct / len(test_loader.sampler) * 100
             print('\n---status:')
             print("\tEpoch:{}/{} \n\tAverage Training Loss:{:.4f}, Average Test Loss:{:.4f}; \n\tAverage Training Acc {:.2f}%, Average Test Acc {:.2f}%\n".format(epoch + 1,
-                                                                                                                                                                epochs,
+                                                                                                                                                                config.epochs,
                                                                                                                                                                 train_loss,                                                                                                                          test_loss,
                                                                                                                                                                 train_acc,
                                                                                                                                                           test_acc))
