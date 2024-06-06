@@ -4,6 +4,13 @@ import torch.nn as nn
 from einops import rearrange
 from einops.layers.torch import Rearrange
 
+'''
+pytorchCoatnet.py
+
+This file contains the CoAtNet class, which is used to create a Convolutional Attention Network (CoAtNet) model.
+
+This file was NOT written by Ethan and Nate. It was created by chinhsuanwu and the github repo can be found at https://github.com/chinhsuanwu/coatnet-pytorch.
+'''
 
 def conv_3x3_bn(inp, oup, image_size, downsample=False):
     stride = 1 if downsample == False else 2

@@ -1,3 +1,9 @@
+'''
+config.py
+
+This file contains the configuration parameters for the CoAtNet model.
+'''
+
 class config:
     img_size = (224, 224, 1) # Each image is 224x224 pixels with 1 channel
     num_splits = 4 # Represents the number of splits for KFold
