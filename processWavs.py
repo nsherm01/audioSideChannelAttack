@@ -6,6 +6,23 @@ import numpy as np
 import soundfile as sf
 from skimage.transform import resize
 
+'''
+processWavs.py
+
+This script processes multiple WAV files using librosaPeaks.py. It takes in a folder of WAV files and processes each one using librosaPeaks.py.
+This script is useful for processing multiple WAV files at once. It is used to generate the mel spectrograms for the training data. 
+Without this script, you would have to run librosaPeaks.py for each WAV file individually.
+
+Before use, ensure you have a folder of WAV files to process. The WAV files should be named with the note they represent (e.g. A.wav, B.wav, etc.).
+Each WAV file should contain only the single note it represents (i.e. 25 keystokes of the 'A' key for A.wav).
+
+Usage:
+    python3 processWavs.py
+
+Arguments:
+    None
+
+'''
 # Define paths
 input_folder = 'keyboard_notes'
 output_folder = 'mel_spectrograms_(128x321)'
