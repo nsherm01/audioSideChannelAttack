@@ -5,6 +5,35 @@ import soundfile as sf
 import sys
 import os
 
+'''
+librosaPeaks.py
+
+This script takes in a WAV file and isolates the peaks of the audio file using the librosa library.
+This is useful for isolating the individual keystrokes of a keyboard in a recording of spaced keystokes.
+It then creates a mel spectrogram for each note and saves it to a folder. The mel spectrograms are saved as numpy files in the output folder.
+These mel spectrograms will be used to train a neural network to classify the notes in another script.
+
+We used this python script to isolate notes for both testing and training. When you run the script with the -test flag, make sure to
+handle the output folder correctly and handcode the labels in the create_mel_spectrogram function.
+
+librosaPeaks.py only isolates the peaks for one given WAV file. To isolate peaks for multiple WAV files (i.e. your training data for each keystoke), 
+you can use the script processWavs.py to run this file multiple times.
+
+It can be run in two ways:
+1. Run the script with the -test flag to generate the mel spectrograms for the 45 key test audio file.
+2. Run the script with the key, audio file, and output folder as arguments to generate the mel spectrograms for a custom audio file.
+
+Usage:
+    python3 librosaPeaks.py -test
+    python3 librosaPeaks.py <key> <audiofile> <output_folder>
+
+Arguments:
+    -test: Flag to generate mel spectrograms for the 45 key test audio file.
+    key: The key of the audio file.
+    audiofile: The path to the audio file.
+    output_folder: The folder to save the mel spectrograms.
+
+'''
 hop_length = 128
 
 def main():
@@ -29,6 +58,19 @@ def main():
     for i, segment in enumerate(notes):
         create_mel_spectrogram(segment, sr, i, key, output_folder)
 
+'''
+showStereoWaveform(y, sr)
+
+This is a helper function that displays the stereo waveform of the audio file.
+This is meant to be used for debugging purposes.
+
+Parameters:
+    y: The audio time series.
+    sr: The sample rate of the audio.
+
+Returns:
+    None
+'''
 def showStereoWaveform(y, sr):
     plt.figure()
     plt.subplot(3, 1, 2)
@@ -36,6 +78,23 @@ def showStereoWaveform(y, sr):
     plt.title('Stereo')
     plt.show()
 
+
+
+'''
+showNoteDetection(onset_strength, notes_frames, T, t)
+
+This is a helper function that displays the onset strength of the audio file.
+This is meant to be used for debugging purposes.
+
+Parameters:
+    onset_strength: The onset strength of the audio.
+    notes_frames: The frames of the notes.
+    T: The total time of the audio.
+    t: The time array.
+
+Returns:
+    None
+'''
 def showNoteDetection(onset_strength, notes_frames, T, t):
 
     note_begins = [note[0] for note in notes_frames]
@@ -54,6 +113,22 @@ def showNoteDetection(onset_strength, notes_frames, T, t):
     plt.ylim(0)
     plt.show()
 
+
+
+
+'''
+showMelSpectrogram(mel_spectrogram, sr)
+
+This is a helper function that displays the mel spectrogram of the audio file.
+This is meant to be used for debugging purposes.
+
+Parameters:
+    mel_spectrogram: The mel spectrogram.
+    sr: The sample rate of the audio.
+
+Returns:
+    None
+'''
 def showMelSpectrogram(mel_spectrogram, sr):
     times = librosa.frames_to_time(range(mel_spectrogram.shape[1]), sr=sr)
 
@@ -65,6 +140,24 @@ def showMelSpectrogram(mel_spectrogram, sr):
     plt.show()    
 
 
+
+
+
+'''
+isolatePeaks(file, key)
+
+This function isolates the peaks of the audio file using the librosa library.
+It removes onsets that are too close together or too close to the end of the audio.
+It then creates the output notes and saves them to the notes folder.
+
+Parameters:
+    file: The path to the audio file.
+    key: The key of the audio file.
+
+Returns:
+    sr: The sample rate of the audio.
+    notes_samples: The isolated notes of the audio.
+'''
 def isolatePeaks(file, key):
     y, sr = librosa.load(file)
 
@@ -106,12 +199,32 @@ def isolatePeaks(file, key):
     return sr, notes_samples
 
 
+
+
+'''
+create_mel_spectrogram(segment, sr, i, key, output_folder)
+
+This function creates a mel spectrogram for the given segment and saves it to the output folder.
+Be careful with the key parameter. You must hardcode the labels of the audio here. 
+The * is a false detected note and the generated mel spectrogram will be ignored/deleted.
+
+Parameters:
+    segment: The segment of the audio.
+    sr: The sample rate of the audio.
+    i: The index of the segment.
+    key: The key of the audio.
+    output_folder: The folder to save the mel spectrogram.
+
+Returns:
+    None
+'''
 def create_mel_spectrogram(segment, sr, i, key, output_folder):
 
     # Compute the mel spectrogram
     mel_spectrogram = librosa.feature.melspectrogram(y=segment, sr=sr, hop_length=16)
     print("Creating Mel Spectrogram Number: ", i, " with shape: ", mel_spectrogram.shape)
 
+    # Change this string to match the correct label for each keystroke. The * is a false detected note and the generated mel spectrogram will be ignored/deleted.
     test_notes_list = list("*PLMNKOIHBUYGVCTFDXRESZAWQHDTPAQJUYRCMP*JAZPIRV")
 
     if (key == "#"):
