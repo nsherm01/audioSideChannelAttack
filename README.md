@@ -100,6 +100,12 @@ This project was created for our senior project and implemented over the course 
 <!-- GETTING STARTED -->
 ## Getting Started
 
+First, go to the root of the project and run
+
+```bash
+pip3 install -r requirements.txt
+```
+
 ### Creating your own model
 If you want to train your model using your own input data, your journey will start in [processWavs.py](processWavs.py).
 You'll want to prepare your data a bit first though:
