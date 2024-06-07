@@ -157,8 +157,8 @@ See the [open issues](https://github.com/nsherm01/audioSideChannelAttack/issues)
 
 <!-- CONTACT -->
 ## Contact
-Nate Sherman - [LinkedIn](https://www.linkedin.com/in/ethan-jerram/) - ejerram@calpoly.edu<br>
-Ethan Jerram - [Website](https://nsherm01.github.io/) - nsherm01@calpoly.edu
+Ethan Jerram - [LinkedIn](https://www.linkedin.com/in/ethan-jerram/) - ejerram@calpoly.edu<br>
+Nate Sherman - [Website](https://nsherm01.github.io/) - nsherm01@calpoly.edu
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
